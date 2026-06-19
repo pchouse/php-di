@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace PChouse\Di;
 
+use Monolog\Logger;
+
 /**
  * Dependency injection container
  */
@@ -45,7 +47,10 @@ class Container
      */
     public static ?string $routesFilePath = null;
 
-    protected \Logger $logger;
+    /**
+     * @var \Monolog\Logger|null
+     */
+    public static Logger|null $logger = null;
 
     /**
      * The Container instance
@@ -73,8 +78,7 @@ class Container
      */
     protected function __construct()
     {
-        $this->logger = \Logger::getLogger(static::class);
-        $this->logger->debug("New Instance");
+        Container::$logger?->debug("New Instance");
         $this->initBinds();
         $this->initRoutes();
     }
@@ -87,7 +91,7 @@ class Container
      */
     protected function initBinds(): void
     {
-        $this->logger->debug("Init binds in DI Container");
+        Container::$logger?->debug("Init binds in DI Container");
         if (static::$bindsFilePath === null) {
             return;
         }
@@ -107,7 +111,7 @@ class Container
      */
     protected function initRoutes(): void
     {
-        $this->logger->debug("Init routes in DI Container");
+        Container::$logger?->debug("Init routes in DI Container");
         if (static::$routesFilePath === null) {
             return;
         }
@@ -134,7 +138,7 @@ class Container
         if (self::$selfInstance === null || \count($binds) > 0) {
             self::$selfInstance = new self();
         }
-        self::$selfInstance->logger->debug("Build DI Container start");
+        Container::$logger?->debug("Build DI Container start");
         foreach ($binds as $bind) {
             static::$selfInstance?->putBindInStack($bind);
         }
@@ -151,7 +155,7 @@ class Container
         if (self::$selfInstance === null) {
             return;
         }
-        self::$selfInstance->logger->debug("Build DI Container reset");
+        Container::$logger?->debug("Build DI Container reset");
         self::$selfInstance = null;
     }
 
@@ -176,13 +180,13 @@ class Container
         /** @var \PChouse\Di\Container $container */
         $container = static::$selfInstance;
 
-        $container->logger->debug("Getting Route controller for $name");
+        Container::$logger?->debug("Getting Route controller for $name");
 
         $bind = $container->getBindFromStack($name);
 
         if ($bind->getScope() !== Scope::ROUTE) {
             $msg = "'$name' is not a DI route";
-            $container->logger->debug($msg);
+            Container::$logger?->debug($msg);
             throw new DiException($msg, DI_BIND_IS_NOT_ROUTE);
         }
         /** @phpstan-ignore-next-line */
@@ -210,7 +214,7 @@ class Container
         /** @var \PChouse\Di\Container $container */
         $container = static::$selfInstance;
 
-        $container->logger->debug("Get instance for $bindName");
+        Container::$logger?->debug("Get instance for $bindName");
 
         $key  = Container::keyBuilder($bindName);
         $bind = $container->getBindFromStack($bindName);
@@ -233,14 +237,14 @@ class Container
                     $container->singletons[$key] = \call_user_func($bind->getValue());
                 } else {
                     $container->singletons[$key] = $container->createInstance($bind);
-                    $container->logger->info("Singleton $bindName added to Singleton stack");
+                    Container::$logger?->info("Singleton $bindName added to Singleton stack");
                 }
             }
-            $container->logger->info("Return $bindName from Singleton stack");
+            Container::$logger?->info("Return $bindName from Singleton stack");
             return $container->singletons[$key];
         }
 
-        $container->logger->info("Going to create instance $bindName to return");
+        Container::$logger?->info("Going to create instance $bindName to return");
 
         if (\is_callable($bind->getValue())) {
             return \call_user_func($bind->getValue());
@@ -303,7 +307,7 @@ class Container
 
             return $instance;
         } catch (\Throwable $e) {
-            $this->logger->error($e);
+            Container::$logger?->error($e);
             throw $e;
         }
     }

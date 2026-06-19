@@ -38,7 +38,7 @@ class DiException extends \Exception
      * @param int $code                [optional] The Exception code.
      * @param null|\Throwable $previous [optional] The previous throwable used for the exception chaining.
      */
-    #[Pure] public function __construct(string $message = "", int $code = 0, ?\Throwable $previous = null)
+    #[Pure] public function __construct(string $message = "", int $code = 0, \Throwable|null $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }

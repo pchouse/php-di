@@ -48,5 +48,4 @@ class DependencyWiredTwo implements IDIEvents, IDependencyWiredTwo
         }
         $this->beforeReturnInstanceInit = true;
     }
-
 }

@@ -33,15 +33,17 @@ use PChouse\Resources\IDependencyController;
 use PChouse\Resources\IDependencyWiredOne;
 use PChouse\Resources\IDependencyWiredSingleton;
 use PChouse\Resources\IDependencyWiredTwo;
+use PHPUnit\Framework\Attributes\Before;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Random\Randomizer;
 
 class ContainerTest extends TestCase
 {
     /**
-     * @before
      * @return void
      */
+    #[Before]
     public function before(): void
     {
         Container::reset();
@@ -50,12 +52,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testNoBindException(): void
     {
         $this->expectException(DiException::class);
@@ -64,12 +66,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testSingleton(): void
     {
         $singleton = Container::get(IDependencyWiredSingleton::class);
@@ -83,12 +85,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testProvides()
     {
         $provides = Container::get(DependencyProvides::class);
@@ -105,12 +107,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testProvidesSingleton()
     {
         $provides = Container::get(DependencyProvidesSingleton::class);
@@ -127,12 +129,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testTransient(): void
     {
         $dependency = Container::get(IDependency::class);
@@ -167,12 +169,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testRouteFromWrongContainer(): void
     {
         $this->expectException(DiException::class);
@@ -181,12 +183,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testRouteContainer(): void
     {
         $this->assertInstanceOf(
@@ -196,12 +198,12 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testFromWrongContainer(): void
     {
         $this->expectException(DiException::class);
@@ -210,13 +212,13 @@ class ContainerTest extends TestCase
     }
 
     /**
-     * @test
      * @return void
      * @throws \PChouse\Di\DiException
      * @throws \PHPUnit\Framework\MockObject\Exception
      * @throws \ReflectionException
      * @throws \Throwable
      */
+    #[Test]
     public function testMock()
     {
         $rand = -999;
